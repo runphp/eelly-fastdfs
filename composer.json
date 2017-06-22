@@ -1,13 +1,17 @@
 {
-    "name": "eelly/fastdfs",
-    "description": "fastdfs client",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "hehui",
-            "email": "runphp@qq.com"
-        }
-    ],
-    "require": {}
+	"name": "eelly/fastdfs",
+	"description": "fastdfs client",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Eelly",
+			"homepage": "https://www.eelly.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Eelly\\FastDFS\\":"src"
+		}
+	}
 }

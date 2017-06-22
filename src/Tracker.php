@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 /*
- * PHP version 7.1
+ * This file is part of eelly package.
  *
- * @copyright Copyright (c) 2012-2017 EELLY Inc. (https://www.eelly.com)
- * @link      https://api.eelly.com
- * @license   衣联网版权所有
+ * (c) eelly.com
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Eelly\FastDFS;
@@ -14,7 +15,6 @@ namespace Eelly\FastDFS;
 /**
  * Tracker.
  *
- * @author    hehui<hehui@eelly.net>
  */
 class Tracker extends Base
 {
@@ -38,7 +38,7 @@ class Tracker extends Base
         $res_info = self::parseHeader($res_header);
 
         if ($res_info['status'] !== 0) {
-            throw new FastDFSException(
+            throw new Exception(
                 'something wrong with get storage by group name',
                 $res_info['status']);
 
