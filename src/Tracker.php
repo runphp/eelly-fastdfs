@@ -14,7 +14,6 @@ namespace Eelly\FastDFS;
 
 /**
  * Tracker.
- *
  */
 class Tracker extends Base
 {
@@ -60,9 +59,9 @@ class Tracker extends Base
         $storage_index = ord(substr($res_body, -1));
 
         return [
-            'group_name' => $group_name,
-            'storage_addr' => $storage_addr,
-            'storage_port' => $storage_port,
+            'group_name'    => $group_name,
+            'storage_addr'  => $storage_addr,
+            'storage_port'  => $storage_port,
             'storage_index' => $storage_index,
         ];
     }
