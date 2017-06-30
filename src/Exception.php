@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Eelly\FastDFS;
 
-/**
- */
 class Exception extends \RuntimeException
 {
 }

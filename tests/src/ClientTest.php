@@ -33,8 +33,8 @@ class ClientTest extends TestCase
     {
         $this->testFile = dirname(__DIR__).'/resources/test.jpg';
         $this->client = new Client([
-            'host' => '172.18.107.96',
-            'port' => 22122,
+            'host'  => '172.18.107.96',
+            'port'  => 22122,
             'group' => [
                 'G01',
                 'G02',

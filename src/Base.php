@@ -14,7 +14,6 @@ namespace Eelly\FastDFS;
 
 /**
  * Base.
- *
  */
 abstract class Base
 {
@@ -119,9 +118,9 @@ abstract class Base
         $status = $result[10];
 
         return [
-            'length' => $length,
+            'length'  => $length,
             'command' => $command,
-            'status' => $status,
+            'status'  => $status,
         ];
     }
 

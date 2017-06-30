@@ -14,7 +14,6 @@ namespace Eelly\FastDFS;
 
 /**
  * Storage.
- *
  */
 class Storage extends Base
 {
@@ -82,7 +81,7 @@ class Storage extends Base
 
         return [
             'group' => $groupName,
-            'path' => $filePath,
+            'path'  => $filePath,
         ];
     }
 
@@ -159,7 +158,7 @@ class Storage extends Base
 
         return [
             'group' => $groupName,
-            'path' => $filePath,
+            'path'  => $filePath,
         ];
     }
 
@@ -222,7 +221,7 @@ class Storage extends Base
 
         return [
             'group' => $groupName,
-            'path' => $filePath,
+            'path'  => $filePath,
         ];
     }
 
@@ -479,9 +478,9 @@ class Storage extends Base
         $storageId = trim(substr($responseBody, -16));
 
         return [
-            'file_size' => $fileSize,
-            'timestamp' => $timestamp,
-            'crc32' => $crc32,
+            'file_size'  => $fileSize,
+            'timestamp'  => $timestamp,
+            'crc32'      => $crc32,
             'storage_id' => $storageId,
         ];
     }

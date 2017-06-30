@@ -27,7 +27,6 @@ use Psr\Http\Message\UploadedFileInterface;
  *   ],
  * ]);
  * ```
- *
  */
 class Client
 {
