@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of eelly package.
  *
@@ -35,10 +36,10 @@ abstract class Base
     public const GROUP_NAME_MAX_LEN = 16;
     public const OVERWRITE_METADATA = 1;
     public const MERGE_METADATA = 2;
-     // 连接超时时间
+    // 连接超时时间
     public const CONNECT_TIME_OUT = 5;
     public const FILE_PREFIX_MAX_LEN = 16;
-     //传输超时时间
+    //传输超时时间
     public const TRANSFER_TIME_OUT = 5;
 
     //socket套接字
