@@ -39,19 +39,17 @@ class Client
     /**
      * @var array
      */
-    private $storageInfo;
+    private $config;
 
     /**
-     * @var Storage
+     * @var Storage[]
      */
-    private $storage;
+    private $storageMap;
 
     public function __construct(array $config)
     {
-        shuffle($config['group']);
+        $this->config = $config;
         $this->tracker = new Tracker($config['host'], $config['port']);
-        $this->storageInfo = $this->tracker->applyStorage(current($config['group']));
-        $this->storage = new Storage($this->storageInfo['storage_addr'], $this->storageInfo['storage_port']);
     }
 
     /**
@@ -78,7 +76,8 @@ class Client
      */
     public function uploadFile($filename, $ext = '')
     {
-        $result = $this->getStorage()->uploadFile($this->getStorageInfo()['storage_index'], $filename, $ext);
+        list($storageInfo, $storage) = $this->getRandomStorage();
+        $result = $storage->uploadFile($storageInfo['storage_index'], $filename, $ext);
 
         return $result['group'].'/'.$result['path'];
     }
@@ -94,18 +93,29 @@ class Client
     public function deleteFile($filename)
     {
         list($groupName, $filePath) = explode('/', $filename, 2);
-        $result = $this->getStorage()->deleteFile($groupName, $filePath);
+        $result = $this->getStorage($groupName)->deleteFile($groupName, $filePath);
 
         return $result;
     }
 
-    private function getStorageInfo()
+    private function getRandomStorage()
     {
-        return $this->storageInfo;
+        shuffle($this->config['group']);
+        $groupName = current($this->config['group']);
+
+        return [
+            $this->tracker->applyStorage($groupName),
+            $this->getStorage($groupName),
+        ];
     }
 
-    private function getStorage()
+    private function getStorage($groupName)
     {
-        return $this->storage;
+        if (!isset($this->storageMap[$groupName])) {
+            $storageInfo = $this->tracker->applyStorage($groupName);
+            $this->storageMap[$groupName] = new Storage($storageInfo['storage_addr'], $storageInfo['storage_port']);
+        }
+
+        return $this->storageMap[$groupName];
     }
 }

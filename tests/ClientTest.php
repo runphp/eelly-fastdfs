@@ -32,9 +32,9 @@ class ClientTest extends TestCase
 
     public function setUp(): void
     {
-        $this->testFile = dirname(__DIR__).'/resources/test.jpg';
+        $this->testFile = __DIR__.'/resources/test.jpg';
         $this->client = new Client([
-            'host'  => '172.18.107.96',
+            'host'  => '172.18.107.97',
             'port'  => 22122,
             'group' => [
                 'G01',

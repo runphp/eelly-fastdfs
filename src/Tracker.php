@@ -37,7 +37,7 @@ class Tracker extends Base
         $res_header = $this->read(Base::HEADER_LENGTH);
         $res_info = self::parseHeader($res_header);
 
-        if ($res_info['status'] !== 0) {
+        if (0 !== $res_info['status']) {
             throw new Exception(
                 'something wrong with get storage by group name',
                 $res_info['status']);
@@ -57,7 +57,7 @@ class Tracker extends Base
             Base::GROUP_NAME_MAX_LEN + Base::IP_ADDRESS_SIZE - 1,
             Base::PROTO_PKG_LEN_SIZE));
 
-        $storage_index = ord(substr($res_body, -1));
+        $storage_index = \ord(substr($res_body, -1));
 
         return [
             'group_name'    => $group_name,

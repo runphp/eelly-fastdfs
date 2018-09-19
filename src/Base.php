@@ -66,14 +66,14 @@ abstract class Base
 
     public function __destruct()
     {
-        if (is_resource($this->_sock)) {
+        if (\is_resource($this->_sock)) {
             fclose($this->_sock);
         }
     }
 
     final public static function padding($str, $len)
     {
-        $str_len = strlen($str);
+        $str_len = \strlen($str);
 
         return $str_len > $len
             ? substr($str, 0, $len)
@@ -110,7 +110,7 @@ abstract class Base
 
     final public static function parseHeader($str)
     {
-        assert(strlen($str) === self::HEADER_LENGTH);
+        \assert(self::HEADER_LENGTH === \strlen($str));
 
         $result = unpack('C10', $str);
 
@@ -148,7 +148,7 @@ abstract class Base
             }
 
             // x64, bcmath
-            if (function_exists('bcmul')) {
+            if (\function_exists('bcmul')) {
                 return bcadd($lo, bcmul($hi, '4294967296'));
             }
 
@@ -161,7 +161,7 @@ abstract class Base
                 $l = $l % $C;
             }
 
-            if ($h == 0) {
+            if (0 == $h) {
                 return $l;
             }
 
@@ -169,7 +169,7 @@ abstract class Base
         }
 
         // x32, int
-        if ($hi == 0) {
+        if (0 == $hi) {
             if ($lo > 0) {
                 return $lo;
             }
@@ -181,7 +181,7 @@ abstract class Base
         $lo = sprintf('%u', $lo);
 
         // x32, bcmath
-        if (function_exists('bcmul')) {
+        if (\function_exists('bcmul')) {
             return bcadd($lo, bcmul($hi, '4294967296'));
         }
 
@@ -198,7 +198,7 @@ abstract class Base
 
         $h = sprintf('%.0f', $h);
         $l = sprintf('%07.0f', $l);
-        if ($h == '0') {
+        if ('0' == $h) {
             return sprintf('%.0f', (float) $l);
         }
 
@@ -212,19 +212,19 @@ abstract class Base
      */
     final public static function packU64($v)
     {
-        assert(is_numeric($v));
+        \assert(is_numeric($v));
 
         // x64
         if (PHP_INT_SIZE >= 8) {
-            assert($v >= 0);
+            \assert($v >= 0);
 
             // x64, int
-            if (is_int($v)) {
+            if (\is_int($v)) {
                 return pack('NN', $v >> 32, $v & 0xFFFFFFFF);
             }
 
             // x64, bcmath
-            if (function_exists('bcmul')) {
+            if (\function_exists('bcmul')) {
                 $h = bcdiv($v, 4294967296, 0);
                 $l = bcmod($v, 4294967296);
 
@@ -232,7 +232,7 @@ abstract class Base
             }
 
             // x64, no-bcmath
-            $p = max(0, strlen($v) - 13);
+            $p = max(0, \strlen($v) - 13);
             $lo = (int) substr($v, $p);
             $hi = (int) substr($v, 0, $p);
 
@@ -244,12 +244,12 @@ abstract class Base
         }
 
         // x32, int
-        if (is_int($v)) {
+        if (\is_int($v)) {
             return pack('NN', 0, $v);
         }
 
         // x32, bcmath
-        if (function_exists('bcmul')) {
+        if (\function_exists('bcmul')) {
             $h = bcdiv($v, '4294967296', 0);
             $l = bcmod($v, '4294967296');
 
@@ -257,7 +257,7 @@ abstract class Base
         }
 
         // x32, no-bcmath
-        $p = max(0, strlen($v) - 13);
+        $p = max(0, \strlen($v) - 13);
         $lo = (float) substr($v, $p);
         $hi = (float) substr($v, 0, $p);
 
@@ -272,7 +272,7 @@ abstract class Base
     protected function send($data, $length = 0)
     {
         if (!$length) {
-            $length = strlen($data);
+            $length = \strlen($data);
         }
 
         if (feof($this->_sock)
@@ -295,7 +295,7 @@ abstract class Base
 
         $data = stream_get_contents($this->_sock, $length);
 
-        assert($length === strlen($data));
+        \assert($length === \strlen($data));
 
         return $data;
     }
@@ -310,7 +310,7 @@ abstract class Base
             self::CONNECT_TIME_OUT
         );
 
-        if (!is_resource($sock)) {
+        if (!\is_resource($sock)) {
             throw new Exception($this->_errstr, $this->_errno);
         }
 

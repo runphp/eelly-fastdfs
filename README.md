@@ -8,4 +8,11 @@
 
 This is fastdfs php client.
 
+```
+composer require eelly/fastdfs
+
+phpunit --bootstrap vendor/autoload.php tests/ClientTest.php
+
+```
+
 [fastdfs](https://github.com/happyfish100/fastdfs)
