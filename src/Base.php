@@ -279,6 +279,7 @@ abstract class Base
             || fwrite($this->_sock, $data, $length) !== $length) {
             $this->_error = 'connection unexpectedly closed (timed out?)';
             $this->_errno = 0;
+
             throw new Exception($this->_errstr, $this->_errno);
         }
 
@@ -290,6 +291,7 @@ abstract class Base
         if (feof($this->_sock)) {
             $this->_error = 'connection unexpectedly closed (timed out?)';
             $this->_errno = 0;
+
             throw new Exception($this->_errstr, $this->_errno);
         }
 
