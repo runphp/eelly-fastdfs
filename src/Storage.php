@@ -40,11 +40,11 @@ class Storage extends Base
         }
         $pathInfo = pathinfo($filename);
 
-        if (strlen($ext) > Base::FILE_EXT_NAME_MAX_LEN) {
+        if (\strlen($ext) > Base::FILE_EXT_NAME_MAX_LEN) {
             throw new Exception('file ext too long.', 0);
         }
-        if ($ext === '') {
-            $ext = $pathInfo['extension'] ?? mineTypeExtension(mime_content_type($filename));
+        if ('' === $ext) {
+            $ext = $pathInfo['extension'] ?? $this->mineTypeExtension(mime_content_type($filename));
         }
 
         $fp = fopen($filename, 'rb');
@@ -67,7 +67,7 @@ class Storage extends Base
         $responseHeader = $this->read(Base::HEADER_LENGTH);
         $responseInfo = self::parseHeader($responseHeader);
 
-        if ($responseInfo['status'] !== 0) {
+        if (0 !== $responseInfo['status']) {
             throw new Exception(
                 'something wrong with uplode file',
                 $responseInfo['status']);
@@ -108,10 +108,10 @@ class Storage extends Base
 
         $pathInfo = pathinfo($filename);
 
-        if (strlen($ext) > Base::FILE_EXT_NAME_MAX_LEN) {
+        if (\strlen($ext) > Base::FILE_EXT_NAME_MAX_LEN) {
             throw new Exception('file ext too long.', 0);
         }
-        if ($ext === '') {
+        if ('' === $ext) {
             $ext = $pathInfo['extension'];
         }
 
@@ -119,7 +119,7 @@ class Storage extends Base
         flock($fp, LOCK_SH);
 
         $fileSize = filesize($filename);
-        $masterFilePathLen = strlen($masterFilePath);
+        $masterFilePathLen = \strlen($masterFilePath);
 
         $requestBodyLength = 16 + Base::FILE_PREFIX_MAX_LEN +
             Base::FILE_EXT_NAME_MAX_LEN + $masterFilePathLen + $fileSize;
@@ -138,8 +138,8 @@ class Storage extends Base
         $responseHeader = $this->read(Base::HEADER_LENGTH);
         $responseInfo = self::parseHeader($responseHeader);
 
-        if ($responseInfo['status'] !== 0) {
-            if ($responseInfo['status'] == 17) {
+        if (0 !== $responseInfo['status']) {
+            if (17 == $responseInfo['status']) {
                 $msg = 'target slave file already existd';
             } else {
                 $msg = 'something in upload slave file';
@@ -178,10 +178,10 @@ class Storage extends Base
 
         $pathInfo = pathinfo($filename);
 
-        if (strlen($ext) > Base::FILE_EXT_NAME_MAX_LEN) {
+        if (\strlen($ext) > Base::FILE_EXT_NAME_MAX_LEN) {
             throw new Exception('file ext too long.', 0);
         }
-        if ($ext === '') {
+        if ('' === $ext) {
             $ext = $pathInfo['extension'];
         }
 
@@ -205,7 +205,7 @@ class Storage extends Base
         $responseHeader = $this->read(Base::HEADER_LENGTH);
         $responseInfo = self::parseHeader($responseHeader);
 
-        if ($responseInfo['status'] !== 0) {
+        if (0 !== $responseInfo['status']) {
             throw new Exception(
                 'something wrong with uplode file',
                 $responseInfo['status']);
@@ -234,8 +234,8 @@ class Storage extends Base
      */
     public function appendFile($content, $appenderFilePath)
     {
-        $appenderFilePathLength = strlen($appenderFilePath);
-        $content_length = strlen($content);
+        $appenderFilePathLength = \strlen($appenderFilePath);
+        $content_length = \strlen($content);
         $requestBodyLength = (2 * Base::PROTO_PKG_LEN_SIZE) + $appenderFilePathLength + $content_length;
 
         $requestHeader = self::buildHeader(24, $requestBodyLength);
@@ -261,7 +261,7 @@ class Storage extends Base
             return false;
         }
 
-        $filePathLength = strlen($filePath);
+        $filePathLength = \strlen($filePath);
         $fileSize = filesize($filename);
         $requestBodyLength = (3 * Base::PROTO_PKG_LEN_SIZE) + $filePathLength + $fileSize;
 
@@ -296,7 +296,7 @@ class Storage extends Base
      */
     public function deleteFile($groupName, $filePath)
     {
-        $requestBodyLength = strlen($filePath) + Base::GROUP_NAME_MAX_LEN;
+        $requestBodyLength = \strlen($filePath) + Base::GROUP_NAME_MAX_LEN;
         $requestHeader = self::buildHeader(12, $requestBodyLength);
         $requestBody = self::padding($groupName, Base::GROUP_NAME_MAX_LEN).$filePath;
 
@@ -320,7 +320,7 @@ class Storage extends Base
      */
     public function getFileMetaData($groupName, $filePath)
     {
-        $requestBodyLength = strlen($filePath) + Base::GROUP_NAME_MAX_LEN;
+        $requestBodyLength = \strlen($filePath) + Base::GROUP_NAME_MAX_LEN;
         $requestHeader = self::buildHeader(15, $requestBodyLength);
         $requestBody = self::padding($groupName, Base::GROUP_NAME_MAX_LEN).$filePath;
 
@@ -355,9 +355,9 @@ class Storage extends Base
     public function setFileMetaData($groupName, $filePath, array $meta_data, $flag = Base::OVERWRITE_METADATA)
     {
         $meta_data = self::buildMetaData($meta_data);
-        $meta_data_length = strlen($meta_data);
-        $filePathLength = strlen($filePath);
-        $flag = $flag === Base::OVERWRITE_METADATA ? 'O' : 'M';
+        $meta_data_length = \strlen($meta_data);
+        $filePathLength = \strlen($filePath);
+        $flag = Base::OVERWRITE_METADATA === $flag ? 'O' : 'M';
 
         $requestBodyLength = (Base::PROTO_PKG_LEN_SIZE * 2) + 1 + $meta_data_length + $filePathLength + Base::GROUP_NAME_MAX_LEN;
 
@@ -388,7 +388,7 @@ class Storage extends Base
      */
     public function readFile($groupName, $filePath, $offset = 0, $length = 0)
     {
-        $filePathLength = strlen($filePath);
+        $filePathLength = \strlen($filePath);
         $requestBodyLength = (Base::PROTO_PKG_LEN_SIZE * 2) + $filePathLength + Base::GROUP_NAME_MAX_LEN;
 
         $requestHeader = self::buildHeader(14, $requestBodyLength);
@@ -421,7 +421,7 @@ class Storage extends Base
      */
     public function downloadFile($groupName, $filePath, $targetPath, $offset = 0, $length = 0)
     {
-        $filePathLength = strlen($filePath);
+        $filePathLength = \strlen($filePath);
         $requestBodyLength = (Base::PROTO_PKG_LEN_SIZE * 2) + $filePathLength + Base::GROUP_NAME_MAX_LEN;
         $requestHeader = self::buildHeader(14, $requestBodyLength);
         $requestBody = self::packU64($offset).self::packU64($length).self::padding($groupName, Base::GROUP_NAME_MAX_LEN);
@@ -455,7 +455,7 @@ class Storage extends Base
      */
     public function getFileInfo($groupName, $filePath)
     {
-        $requestBodyLength = strlen($filePath) + Base::GROUP_NAME_MAX_LEN;
+        $requestBodyLength = \strlen($filePath) + Base::GROUP_NAME_MAX_LEN;
         $requestHeader = self::buildHeader(22, $requestBodyLength);
         $requestBody = self::padding($groupName, Base::GROUP_NAME_MAX_LEN).$filePath;
 
@@ -484,5 +484,138 @@ class Storage extends Base
             'crc32'      => $crc32,
             'storage_id' => $storageId,
         ];
+    }
+
+    /**
+     * 通过mine type 获取文件后缀
+     *
+     *
+     * @param string $mineType
+     *
+     * @author hehui<hehui@eelly.net>
+     *
+     * @since 2016年10月5日
+     */
+    private function mineTypeExtension($mineType)
+    {
+        $types = [
+            'application/andrew-inset'        => 'ez',
+            'application/atom+xml'            => 'atom',
+            'application/json'                => 'json',
+            'application/mac-binhex40'        => 'hqx',
+            'application/mac-compactpro'      => 'cpt',
+            'application/mathml+xml'          => 'mathml',
+            'application/msword'              => 'doc',
+            'application/octet-stream'        => 'so',
+            'application/oda'                 => 'oda',
+            'application/ogg'                 => 'ogg',
+            'application/pdf'                 => 'pdf',
+            'application/postscript'          => 'ps',
+            'application/rdf+xml'             => 'rdf',
+            'application/rss+xml'             => 'rss',
+            'application/smil'                => 'smil',
+            'application/srgs'                => 'gram',
+            'application/srgs+xml'            => 'grxml',
+            'application/vnd.mif'             => 'mif',
+            'application/vnd.mozilla.xul+xml' => 'xul',
+            'application/vnd.ms-excel'        => 'xls',
+            'application/vnd.ms-powerpoint'   => 'ppt',
+            'application/vnd.rn-realmedia'    => 'rm',
+            'application/vnd.wap.wbxml'       => 'wbxml',
+            'application/vnd.wap.wmlc'        => 'wmlc',
+            'application/vnd.wap.wmlscriptc'  => 'wmlsc',
+            'application/voicexml+xml'        => 'vxml',
+            'application/x-bcpio'             => 'bcpio',
+            'application/x-cdlink'            => 'vcd',
+            'application/x-chess-pgn'         => 'pgn',
+            'application/x-cpio'              => 'cpio',
+            'application/x-csh'               => 'csh',
+            'application/x-director'          => 'dxr',
+            'application/x-dvi'               => 'dvi',
+            'application/x-futuresplash'      => 'spl',
+            'application/x-gtar'              => 'gtar',
+            'application/x-hdf'               => 'hdf',
+            'application/x-javascript'        => 'js',
+            'application/x-koan'              => 'skt',
+            'application/x-latex'             => 'latex',
+            'application/x-netcdf'            => 'nc',
+            'application/x-sh'                => 'sh',
+            'application/x-shar'              => 'shar',
+            'application/x-shockwave-flash'   => 'swf',
+            'application/x-stuffit'           => 'sit',
+            'application/x-sv4cpio'           => 'sv4cpio',
+            'application/x-sv4crc'            => 'sv4crc',
+            'application/x-tar'               => 'tar',
+            'application/x-tcl'               => 'tcl',
+            'application/x-tex'               => 'tex',
+            'application/x-texinfo'           => 'texinfo',
+            'application/x-troff'             => 'tr',
+            'application/x-troff-man'         => 'man',
+            'application/x-troff-me'          => 'me',
+            'application/x-troff-ms'          => 'ms',
+            'application/x-ustar'             => 'ustar',
+            'application/x-wais-source'       => 'src',
+            'application/xhtml+xml'           => 'xhtml',
+            'application/xml'                 => 'xsl',
+            'application/xml-dtd'             => 'dtd',
+            'application/xslt+xml'            => 'xslt',
+            'application/zip'                 => 'zip',
+            'audio/basic'                     => 'snd',
+            'audio/midi'                      => 'midi',
+            'audio/mpeg'                      => 'mpga',
+            'audio/x-aiff'                    => 'aiff',
+            'audio/x-mpegurl'                 => 'm3u',
+            'audio/x-pn-realaudio'            => 'ram',
+            'audio/x-wav'                     => 'wav',
+            'chemical/x-pdb'                  => 'pdb',
+            'chemical/x-xyz'                  => 'xyz',
+            'image/bmp'                       => 'bmp',
+            'image/cgm'                       => 'cgm',
+            'image/gif'                       => 'gif',
+            'image/ief'                       => 'ief',
+            'image/jpeg'                      => 'jpg',
+            'image/png'                       => 'png',
+            'image/svg+xml'                   => 'svgz',
+            'image/tiff'                      => 'tiff',
+            'image/vnd.djvu'                  => 'djvu',
+            'image/vnd.wap.wbmp'              => 'wbmp',
+            'image/x-cmu-raster'              => 'ras',
+            'image/x-icon'                    => 'ico',
+            'image/x-portable-anymap'         => 'pnm',
+            'image/x-portable-bitmap'         => 'pbm',
+            'image/x-portable-graymap'        => 'pgm',
+            'image/x-portable-pixmap'         => 'ppm',
+            'image/x-rgb'                     => 'rgb',
+            'image/x-xbitmap'                 => 'xbm',
+            'image/x-xpixmap'                 => 'xpm',
+            'image/x-xwindowdump'             => 'xwd',
+            'model/iges'                      => 'igs',
+            'model/mesh'                      => 'silo',
+            'model/vrml'                      => 'wrl',
+            'text/calendar'                   => 'ifb',
+            'text/css'                        => 'css',
+            'text/csv'                        => 'csv',
+            'text/html'                       => 'html',
+            'text/plain'                      => 'txt',
+            'text/richtext'                   => 'rtx',
+            'text/rtf'                        => 'rtf',
+            'text/sgml'                       => 'sgml',
+            'text/tab-separated-values'       => 'tsv',
+            'text/vnd.wap.wml'                => 'wml',
+            'text/vnd.wap.wmlscript'          => 'wmls',
+            'text/x-setext'                   => 'etx',
+            'video/mp4'                       => 'mp4',
+            'video/mpeg'                      => 'mpg',
+            'video/quicktime'                 => 'qt',
+            'video/vnd.mpegurl'               => 'mxu',
+            'video/x-msvideo'                 => 'avi',
+            'video/x-sgi-movie'               => 'movie',
+            'x-conference/x-cooltalk'         => 'ice',
+        ];
+        if (isset($types[$mineType])) {
+            return $types[$mineType];
+        } else {
+            return '';
+        }
     }
 }
